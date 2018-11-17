@@ -23,6 +23,12 @@ export default class GamePiece extends React.Component {
     this.scaleValue = new Animated.Value(0);
     this.elevationValue = new Animated.Value(0);
 
+    // Callback function to notify board (parent) of piece rotation state
+    this.onUpdate = props.onUpdate;
+    this.row = props.row;
+    this.column = props.column;
+    this.initialSides = props.initialSides.slice(0);
+
     this.state = {
       sides: props.initialSides || [0, 0, 0, 0],
       rotateState: 0,
@@ -72,7 +78,11 @@ export default class GamePiece extends React.Component {
     sides.unshift(lastSide);
     this.setState({ sides });
     console.log(this.state.sides);
-    // todo: event to send update to game board (or are props two-way)
+
+    // send update to game board
+    if (this.onUpdate) {
+      this.onUpdate(this.row, this.column, this.state.sides);
+    }
   }
 
   render() {
@@ -103,6 +113,10 @@ export default class GamePiece extends React.Component {
         onPress={this._onPress.bind(this)}
       >
         <Animated.View style={[styles.gamepiece, transformStyle]}>
+          <View style={[styles.sideMarker, styles.right, this.initialSides[0] === 0 ? styles.noConnection : null]}></View>
+          <View style={[styles.sideMarker, styles.bottom, this.initialSides[1] === 0 ? styles.noConnection : null]}></View>
+          <View style={[styles.sideMarker, styles.left, this.initialSides[2] === 0 ? styles.noConnection : null]}></View>
+          <View style={[styles.sideMarker, styles.top, this.initialSides[3] === 0 ? styles.noConnection : null]}></View>
           <Text style={styles.text}>{this.state.sides}</Text>
         </Animated.View>
       </TouchableWithoutFeedback>
@@ -121,5 +135,34 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#ffffff',
-  }
+  },
+  sideMarker: {
+    width: 10,
+    height: 10,
+    position: 'absolute',
+    backgroundColor: '#ffffff',
+  },
+  noConnection: {
+    backgroundColor: 'transparent',
+  },
+  top: {
+    top: 0,
+    left: 15,
+    height: 20,
+  },
+  bottom: {
+    bottom: 0,
+    left: 15,
+    height: 20,
+  },
+  right: {
+    right: 0,
+    top: 15,
+    width: 20,
+  },
+  left: {
+    left: 0,
+    top: 15,
+    width: 20,
+  },
 })
