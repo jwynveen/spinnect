@@ -12,7 +12,21 @@ export default class GameScreen extends React.Component {
   render() {
     return (
       <View style={styles.gameboard}>
-        <GamePiece initialSides={[1, 1, 0, 1]} />
+        <View style={styles.row}>
+          <GamePiece initialSides={[1, 1, 0, 0]} />
+          <GamePiece initialSides={[0, 1, 0, 1]} />
+          <GamePiece initialSides={[1, 0, 0, 1]} />
+        </View>
+        <View style={styles.row}>
+          <GamePiece initialSides={[1, 1, 0, 1]} />
+          <GamePiece initialSides={[1, 1, 1, 1]} />
+          <GamePiece initialSides={[1, 1, 0, 1]} />
+        </View>
+        <View style={styles.row}>
+          <GamePiece initialSides={[1, 1, 0, 0]} />
+          <GamePiece initialSides={[0, 1, 0, 1]} />
+          <GamePiece initialSides={[1, 0, 0, 1]} />
+        </View>
       </View>
     );
   }
@@ -24,5 +38,8 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
     marginBottom: 40,
+  },
+  row: {
+    flexDirection: 'row',
   },
 });
