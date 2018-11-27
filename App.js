@@ -8,6 +8,7 @@ import {
   View,
   ScrollView
 } from 'react-native';
+import Home from './screens/Home';
 import GameScreen from './screens/GameScreen';
 
 import firebase from 'react-native-firebase';
@@ -27,13 +28,14 @@ export default class App extends React.Component {
   }
 
   render() {
-    return (
+    return (<Home/>);
+    /*return (
       <ScrollView>
         <View style={styles.container}>
           <GameScreen/>
         </View>
       </ScrollView>
-    );
+    );*/
   }
 }
 
