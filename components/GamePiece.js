@@ -9,19 +9,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import pieces from './shapes/standard/index';
 
 export default class GamePiece extends React.Component {
-
-
 
   constructor(props) {
     super(props);
 
-    this.animationDuration = 250;
-
-    this.rotateValue = new Animated.Value(0);
-    this.scaleValue = new Animated.Value(0);
-    this.elevationValue = new Animated.Value(0);
+    this.animationDuration = 150;
 
     // Callback function to notify board (parent) of piece rotation state
     this.onUpdate = props.onUpdate;
@@ -29,9 +24,53 @@ export default class GamePiece extends React.Component {
     this.column = props.column;
     this.initialSides = props.initialSides.slice(0);
 
+    // Get appropriate shape and rotation
+    const vertices = this.initialSides.reduce((count, side) => (count + side), 0);
+    const sideString = this.initialSides.join('');
+    let initialRotation = 0;
+
+    switch (vertices) {
+      case 4:
+        this.PieceShape = pieces.Quad;
+        break;
+      case 3:
+        this.PieceShape = pieces.Triple;
+        initialRotation = this.initialSides.indexOf(0) + 1;
+        if (initialRotation >= 4) {
+          initialRotation -= 4;
+        }
+        break;
+      case 2:
+        if (sideString.includes('11') || sideString.includes('00')) {
+          this.PieceShape = pieces.Corner;
+          initialRotation = sideString.indexOf('11');
+          if (initialRotation === -1) {
+            initialRotation = 3;
+          }
+        } else {
+          this.PieceShape = pieces.Straight;
+          if (this.initialSides[0] === 0) {
+            initialRotation = 1;
+          }
+        }
+        break;
+      case 1:
+        this.PieceShape = pieces.Single;
+        initialRotation = this.initialSides.indexOf(1);
+        break;
+      default:
+        this.PieceShape = pieces.Empty;
+        break;
+    }
+
+    // Initial transform values
+    this.rotateValue = new Animated.Value(initialRotation);
+    this.scaleValue = new Animated.Value(0);
+    this.elevationValue = new Animated.Value(0);
+
     this.state = {
       sides: props.initialSides || [0, 0, 0, 0],
-      rotateState: 0,
+      rotateState: initialRotation,
     }
   }
 
@@ -112,12 +151,8 @@ export default class GamePiece extends React.Component {
       <TouchableWithoutFeedback
         onPress={this._onPress.bind(this)}
       >
-        <Animated.View style={[styles.gamepiece, transformStyle]}>
-          <View style={[styles.sideMarker, styles.right, this.initialSides[0] === 0 ? styles.noConnection : null]}></View>
-          <View style={[styles.sideMarker, styles.bottom, this.initialSides[1] === 0 ? styles.noConnection : null]}></View>
-          <View style={[styles.sideMarker, styles.left, this.initialSides[2] === 0 ? styles.noConnection : null]}></View>
-          <View style={[styles.sideMarker, styles.top, this.initialSides[3] === 0 ? styles.noConnection : null]}></View>
-          <Text style={styles.text}>{this.state.sides}</Text>
+        <Animated.View style={[styles.gamepiece, transformStyle]} width={this.props.size} height={this.props.size}>
+          <this.PieceShape size={this.props.size} color={this.props.color} />
         </Animated.View>
       </TouchableWithoutFeedback>
     );
@@ -126,43 +161,8 @@ export default class GamePiece extends React.Component {
 
 const styles = StyleSheet.create({
   gamepiece: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#666666',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: {
-    color: '#ffffff',
-  },
-  sideMarker: {
-    width: 10,
-    height: 10,
-    position: 'absolute',
-    backgroundColor: '#ffffff',
-  },
-  noConnection: {
-    backgroundColor: 'transparent',
-  },
-  top: {
-    top: 0,
-    left: 15,
-    height: 20,
-  },
-  bottom: {
-    bottom: 0,
-    left: 15,
-    height: 20,
-  },
-  right: {
-    right: 0,
-    top: 15,
-    width: 20,
-  },
-  left: {
-    left: 0,
-    top: 15,
-    width: 20,
-  },
-})
+});

@@ -2,12 +2,14 @@
 
 import React from 'react';
 import {
+  Dimensions,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import GamePiece from '../components/GamePiece';
 import {variables} from "../styles";
+const { width } = Dimensions.get('window');
 
 export default class GameScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
@@ -21,25 +23,43 @@ export default class GameScreen extends React.Component {
   constructor(props) {
     super(props);
 
+    // todo: get level dynamically
+    const level = [
+      [
+        {sides: [1, 1, 0, 0], isConnected: false},
+        {sides: [0, 1, 1, 1], isConnected: false},
+        {sides: [1, 0, 1, 0], isConnected: false},
+        {sides: [1, 0, 0, 1], isConnected: false},
+      ],
+      [
+        {sides: [1, 1, 0, 1], isConnected: false},
+        {sides: [1, 1, 1, 1], isConnected: false},
+        {sides: [1, 1, 1, 0], isConnected: false},
+        {sides: [0, 1, 1, 0], isConnected: false},
+      ],
+      [
+        {sides: [1, 0, 1, 0], isConnected: false},
+        {sides: [0, 1, 0, 1], isConnected: false},
+        {sides: [0, 0, 0, 1], isConnected: false},
+        {sides: [0, 0, 0, 0], isConnected: false},
+      ],
+      [
+        {sides: [1, 1, 0, 0], isConnected: false},
+        {sides: [0, 1, 1, 1], isConnected: false},
+        {sides: [1, 0, 1, 0], isConnected: false},
+        {sides: [1, 0, 0, 0], isConnected: false},
+      ],
+    ];
+
+    const difficulty = props.navigation.getParam('difficulty', '');
+    const levelSize = level.length;
+    const pieceSize = Math.floor(width / levelSize / 10) * 10; // round down to nearest 10
     this.state = {
       isLevelComplete: false,
-      level: [
-        [
-          {sides: [1, 1, 0, 0], isConnected: false},
-          {sides: [0, 1, 1, 1], isConnected: false},
-          {sides: [1, 0, 0, 1], isConnected: false},
-        ],
-        [
-          {sides: [1, 1, 0, 1], isConnected: false},
-          {sides: [1, 1, 1, 1], isConnected: false},
-          {sides: [1, 1, 0, 1], isConnected: false},
-        ],
-        [
-          {sides: [1, 1, 0, 0], isConnected: false},
-          {sides: [0, 1, 1, 1], isConnected: false},
-          {sides: [1, 0, 0, 1], isConnected: false},
-        ],
-      ],
+      difficulty,
+      level,
+      pieceSize,
+      pieceColor: variables.color.byDifficulty(difficulty),
     };
   }
   _onPieceUpdate(row, column, sides) {
@@ -127,6 +147,8 @@ export default class GameScreen extends React.Component {
               initialSides={piece.sides}
               isConnected={piece.isConnected}
               onUpdate={this._onPieceUpdate.bind(this)}
+              size={this.state.pieceSize}
+              color={this.state.pieceColor}
               row={rowIndex}
               column={columnIndex}
               key={(rowIndex + 1) + '.' + (columnIndex + 1)}
@@ -136,11 +158,14 @@ export default class GameScreen extends React.Component {
       )
     });
     return (
-      <View style={styles.gameboard}>
-        {rows}
+      <View style={styles.container}>
+        <View style={styles.gameboard}>
+          {rows}
+        </View>
+
         <View style={styles.debug}>
-          <Text>{JSON.stringify(this.state.level, null, true)}</Text>
           <Text>Level Complete: {this.state.isLevelComplete ? 'true' : 'false'}</Text>
+          <Text>{JSON.stringify(this.state.level, null, true)}</Text>
         </View>
       </View>
     );
@@ -148,6 +173,10 @@ export default class GameScreen extends React.Component {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: variables.color.background,
+    alignItems: 'center',
+  },
   gameboard: {
     marginTop: 40,
     marginLeft: 15,
