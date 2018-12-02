@@ -21,12 +21,15 @@ const AppNavigator = createStackNavigator({
 }, {
   initialRouteName: 'Home',
   defaultNavigationOptions: {
+    headerRight: <View />,
     headerStyle: {
       backgroundColor: variables.color.background,
     },
     headerTintColor: '#fff',
     headerTitleStyle: {
       fontWeight: 'bold',
+      textAlign: 'center',
+      flex:1,
     },
   },
 });
