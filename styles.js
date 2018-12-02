@@ -7,6 +7,8 @@ export const variables = {
     background: '#DFCFC5',
     buttonText: '#E3F2FD',
 
+    primary: '#5C9EAD',
+
     color1: '#558A70',
     color1Light: '#7BAB94',
     color1Dark: '#31634B',
