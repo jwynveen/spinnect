@@ -7,8 +7,17 @@ import {
   View,
 } from 'react-native';
 import GamePiece from '../components/GamePiece';
+import {variables} from "../styles";
 
 export default class GameScreen extends React.Component {
+  static navigationOptions = ({navigation}) => {
+    const difficulty = navigation.getParam('difficulty', '');
+    return {
+      title: difficulty,
+      headerTintColor: variables.color.byDifficulty(difficulty, 'Dark'),
+    };
+  };
+
   constructor(props) {
     super(props);
 

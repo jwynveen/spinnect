@@ -8,16 +8,32 @@ import {
   View,
   ScrollView
 } from 'react-native';
+import firebase from 'react-native-firebase';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+import { variables } from './styles';
+
 import Home from './screens/Home';
 import GameScreen from './screens/GameScreen';
 
-import firebase from 'react-native-firebase';
+const AppNavigator = createStackNavigator({
+  Home: Home,
+  GameScreen: GameScreen,
+}, {
+  initialRouteName: 'Home',
+  defaultNavigationOptions: {
+    headerStyle: {
+      backgroundColor: variables.color.background,
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  },
+});
+
+const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
-  }
 
   async componentDidMount() {
     // TODO: You: Do firebase things
@@ -28,22 +44,6 @@ export default class App extends React.Component {
   }
 
   render() {
-    return (<Home/>);
-    /*return (
-      <ScrollView>
-        <View style={styles.container}>
-          <GameScreen/>
-        </View>
-      </ScrollView>
-    );*/
+    return <AppContainer />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-});

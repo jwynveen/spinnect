@@ -8,8 +8,21 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
+import {variables} from '../styles';
 
 export default class Home extends React.Component {
+  static navigationOptions = {
+    header: null,
+  };
+
+  _onPress = (difficulty) => {
+    return () => {
+      this.props.navigation.navigate('GameScreen', {
+        difficulty,
+      });
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -18,15 +31,15 @@ export default class Home extends React.Component {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableHighlight style={[styles.button, styles.button1]}>
+          <TouchableHighlight onPress={this._onPress('Easy')} style={[styles.button, styles.button1]}>
             <Text style={styles.buttonText}>Easy</Text>
           </TouchableHighlight>
 
-          <TouchableHighlight style={[styles.button, styles.button2]}>
+          <TouchableHighlight onPress={this._onPress('Medium')} style={[styles.button, styles.button2]}>
             <Text style={styles.buttonText}>Medium</Text>
           </TouchableHighlight>
 
-          <TouchableHighlight style={[styles.button, styles.button3]}>
+          <TouchableHighlight onPress={this._onPress('Hard')} style={[styles.button, styles.button3]}>
             <Text style={styles.buttonText}>Hard</Text>
           </TouchableHighlight>
         </View>
@@ -40,7 +53,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#DFCFC5',
+    backgroundColor: variables.color.background,
   },
   header: {
     // height: '30%',
@@ -66,19 +79,19 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: '#E3F2FD',
+    color: variables.color.buttonText,
     textAlign: 'center',
     fontSize: 20,
     fontFamily: 'Futura',
     fontWeight: '300',
   },
   button1: {
-    backgroundColor: '#558A70',
+    backgroundColor: variables.color.color1,
   },
   button2: {
-    backgroundColor: '#55788A',
+    backgroundColor: variables.color.color2,
   },
   button3: {
-    backgroundColor: '#5E558A',
+    backgroundColor: variables.color.color3,
   },
 });
