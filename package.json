@@ -22,7 +22,14 @@
     "test": "jest"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "testPathIgnorePatterns": ["/node_modules/", "/Pods/", "App.test.js"],
+    "transformIgnorePatterns": [
+      "node_modules/(?!react-native|react-navigation)/"
+    ],
+    "transform": {
+      "^.+\\.(js)$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
+    }
   },
   "dependencies": {
     "lodash": "^4.17.11",

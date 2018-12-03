@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   Dimensions,
-  Image,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -14,6 +13,7 @@ import BannerAd from '../components/BannerAd';
 import GamePiece from '../components/GamePiece';
 import ResetButton from '../components/ResetButton';
 import {variables} from "../styles";
+import levelHelper from '../levelHelper';
 const { width } = Dimensions.get('window');
 
 export default class GameScreen extends React.Component {
@@ -87,15 +87,13 @@ export default class GameScreen extends React.Component {
     //todo: _onNext
   }
   _onPieceUpdate(row, column, sides) {
-    // this.state.level[row][column].sides = sides;
+    this.state.level[row][column].sides = sides;
 
-    const level = this.isConnected(this.state.level, row, column, sides, true);
+    const level = levelHelper.isPieceConnected(this.state.level, row, column, true);
 
     const isLevelComplete = this.isLevelComplete(level);
 
     this.setState({isLevelComplete, level});
-
-    // Check if level is all connected
   }
 
   isLevelComplete(level) {
@@ -110,55 +108,6 @@ export default class GameScreen extends React.Component {
       }
     }
     return isLevelComplete;
-  }
-  isConnected(level, row, column, sides, checkChild) {
-
-    const lastRow = level[row - 1];
-    const currentRow = level[row];
-    const nextRow = level[row + 1];
-
-    let isConnected = true;
-
-    // isSideConnect (1)
-    if (currentRow && currentRow[column + 1]) {
-      const neighborPiece = currentRow[column + 1];
-      const isSideConnected = sides[0] === neighborPiece.sides[2]
-      isConnected = isConnected && isSideConnected;
-      if (checkChild) {
-        this.isConnected(level, row, column + 1, neighborPiece.sides);
-      }
-    }
-    // isSideConnect (2)
-    if (nextRow && nextRow[column]) {
-      const neighborPiece = nextRow[column];
-      const isSideConnected = sides[1] === neighborPiece.sides[3];
-      isConnected = isConnected && isSideConnected;
-      if (checkChild) {
-        this.isConnected(level, row + 1, column, neighborPiece.sides);
-      }
-    }
-    // isSideConnect (3)
-    if (currentRow && currentRow[column - 1]) {
-      const neighborPiece = currentRow[column - 1];
-      const isSideConnected = sides[2] === neighborPiece.sides[0];
-      isConnected = isConnected && isSideConnected;
-      if (checkChild) {
-        this.isConnected(level, row, column - 1, neighborPiece.sides);
-      }
-    }
-    // isSideConnect (4)
-    if (lastRow && lastRow[column]) {
-      const neighborPiece = lastRow[column];
-      const isSideConnected = sides[3] === neighborPiece.sides[1];
-      isConnected = isConnected && isSideConnected;
-      if (checkChild) {
-        this.isConnected(level, row - 1, column, neighborPiece.sides);
-      }
-    }
-
-    level[row][column].isConnected = isConnected;
-
-    return level;
   }
 
   render() {

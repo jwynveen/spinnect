@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Platform,
-  Image,
-  Text,
-  TouchableHighlight,
-  View,
-  ScrollView
-} from 'react-native';
+import { View } from 'react-native';
 import firebase from 'react-native-firebase';
 import config from 'react-native-config'
 import { createStackNavigator, createAppContainer } from 'react-navigation';
