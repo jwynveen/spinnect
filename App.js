@@ -9,6 +9,7 @@ import {
   ScrollView
 } from 'react-native';
 import firebase from 'react-native-firebase';
+import config from 'react-native-config'
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import { variables } from './styles';
 
@@ -43,6 +44,7 @@ export default class App extends React.Component {
     // const { user } = await firebase.auth().signInAnonymously();
     // console.warn('User -> ', user.toJSON());
 
+    firebase.admob().initialize(config.ADMOB_APP_ID);
     // await firebase.analytics().logEvent('foo', { bar: '123'});
   }
 

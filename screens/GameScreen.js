@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { cloneDeep } from 'lodash';
+import BannerAd from '../components/BannerAd';
 import GamePiece from '../components/GamePiece';
 import ResetButton from '../components/ResetButton';
 import {variables} from "../styles";
@@ -63,6 +64,7 @@ export default class GameScreen extends React.Component {
     // ...rounded down to nearest 10
     // todo: set max based on height (header, reset button, ad)
     const pieceSize = Math.floor((width - 20) / levelSize / 10) * 10;
+
     this.state = {
       attempt: 0, // this just gives a unique key to pieces so we can reset and have them update
       isLevelComplete: false,
@@ -215,7 +217,7 @@ export default class GameScreen extends React.Component {
         </View>
 
         <View style={styles.adContainer}>
-          <Text>todo: ads</Text>
+          <BannerAd />
         </View>
 
         {overlay}
@@ -247,7 +249,8 @@ const styles = StyleSheet.create({
   adContainer: {
     backgroundColor: '#ffffff',
     width: '100%',
-    height: 60,
+    height: 50,
+    alignItems: 'center',
   },
 
   overlay: {

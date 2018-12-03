@@ -11,9 +11,10 @@
     "replace-in-file": "^3.4.0"
   },
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "apk": "cd android && ./gradlew assembleRelease",
+    "android": "ENVFILE=.env.dev react-native run-android",
+    "android-prod": "ENVFILE=.env.release react-native run-android",
+    "ios": "ENVFILE=.env.dev react-native run-ios",
+    "apk": "export ENVFILE=.env.release && cd android && ./gradlew assembleRelease && cd ..",
     "clearcache": "watchman watch-del-all && react-native start --reset-cache",
     "resetcache": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm install && npm start -- --reset-cache",
     "rename": "node ./bin/rename.js",
@@ -27,6 +28,7 @@
     "lodash": "^4.17.11",
     "react": "16.5.0",
     "react-native": "0.57.1",
+    "react-native-config": "^0.11.7",
     "react-native-firebase": "^5.0.0",
     "react-native-gesture-handler": "^1.0.10",
     "react-native-svg": "^8.0.8",
