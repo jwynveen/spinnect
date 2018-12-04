@@ -2,6 +2,9 @@ import {
   cloneDeep,
   every,
   flattenDeep,
+  pull,
+  random,
+  sum,
 } from 'lodash';
 
 export default {
@@ -92,6 +95,62 @@ export default {
     return every(pieces, { isConnected: true });
   },
 
+  generate(height, width) {
+    const level = [];
+
+    for (let rowIdx = 0; rowIdx < height; rowIdx++) {
+      const row = [];
+
+      for (let colIdx = 0; colIdx < width; colIdx++) {
+        const sides = new Array(4);
+
+        // Top
+        if (rowIdx === 0) {
+          sides[3] = 0;
+        } else {
+          sides[3] = level[rowIdx - 1][colIdx].sides[1];
+        }
+
+        // Left
+        if (colIdx === 0) {
+          sides[2] = 0;
+        } else {
+          sides[2] = row[colIdx - 1].sides[0];
+        }
+
+        const connections = sum(sides);
+        let options = [
+          '00',
+          '01',
+          '10',
+          '11',
+        ];
+        if (connections === 0) {
+          pull(options, '00');
+        }
+        const randomOption = options[random(0, options.length - 1)];
+
+        // Right
+        if (colIdx === width - 1) {
+          sides[0] = 0;
+        } else {
+          sides[0] = Number(randomOption[0]);
+        }
+
+        // Bottom
+        if (rowIdx === height - 1) {
+          sides[1] = 0;
+        } else {
+          sides[1] = Number(randomOption[1]);
+        }
+
+        row.push({sides});
+      }
+      level.push(row);
+    }
+    return level;
+  },
+
   /**
    * Convert level to ASCII representation
    * @param {array} level
@@ -121,6 +180,9 @@ export default {
    */
   pieceToASCII(piece) {
     switch (piece) {
+      // empty
+      case '0000':
+        return '◇';
       // single
       case '1000':
         return '╺';

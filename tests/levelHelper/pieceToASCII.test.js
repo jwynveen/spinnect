@@ -1,5 +1,10 @@
 import levelHelper from '../../levelHelper';
 
+it('converts empty 1', () => {
+  const result = levelHelper.pieceToASCII('0000');
+  expect(result).toEqual('◇');
+});
+
 it('converts single 1', () => {
   const result = levelHelper.pieceToASCII('1000');
   expect(result).toEqual('╺');
