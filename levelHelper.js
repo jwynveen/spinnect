@@ -76,5 +76,78 @@ export default {
     levelClone[row][column].isConnected = isConnected;
 
     return levelClone;
+  },
+
+  /**
+   * Convert level to ASCII representation
+   * @param {array} level
+   * @returns {string}
+   */
+  levelToASCII(level) {
+    let output = '';
+
+    for (let rowIdx = 0; rowIdx < level.length; rowIdx++) {
+      for (let cell of level[rowIdx]) {
+        output += this.pieceToASCII(cell.sides.join(''));
+      }
+
+      // add line break only if not the last row
+      if (rowIdx < level.length - 1) {
+        output += '\n';
+      }
+    }
+
+    return output;
+  },
+
+  /**
+   * Convert piece to ASCII character that represents it
+   * @param {string} piece
+   * @returns {string}
+   */
+  pieceToASCII(piece) {
+    switch (piece) {
+      // single
+      case '1000':
+        return '╺';
+      case '0100':
+        return '╻';
+      case '0010':
+        return '╸';
+      case '0001':
+        return '╹';
+
+      // double - corner
+      case '1100':
+        return '┏';
+      case '0110':
+        return '┓';
+      case '0011':
+        return '┛';
+      case '1001':
+        return '┗';
+
+      // double - straight
+      case '1010':
+        return '━';
+      case '0101':
+        return '┃';
+
+      // triple
+      case '1110':
+        return '┳';
+      case '0111':
+        return '┫';
+      case '1011':
+        return '┻';
+      case '1101':
+        return '┣';
+
+      // quad
+      case '1111':
+        return '╋';
+    }
+
+    return '?';
   }
 }
