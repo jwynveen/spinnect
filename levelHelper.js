@@ -1,4 +1,8 @@
-import { cloneDeep } from 'lodash';
+import {
+  cloneDeep,
+  every,
+  flattenDeep,
+} from 'lodash';
 
 export default {
   /**
@@ -76,6 +80,16 @@ export default {
     levelClone[row][column].isConnected = isConnected;
 
     return levelClone;
+  },
+
+  /**
+   * Check if isConnected===true on all pieces in level
+   * @param {array} level
+   * @returns {boolean}
+   */
+  isLevelComplete(level) {
+    const pieces = flattenDeep(level);
+    return every(pieces, { isConnected: true });
   },
 
   /**

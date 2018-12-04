@@ -91,23 +91,9 @@ export default class GameScreen extends React.Component {
 
     const level = levelHelper.isPieceConnected(this.state.level, row, column, true);
 
-    const isLevelComplete = this.isLevelComplete(level);
+    const isLevelComplete = levelHelper.isLevelComplete(level);
 
     this.setState({isLevelComplete, level});
-  }
-
-  isLevelComplete(level) {
-    let isLevelComplete = true;
-    for (let levelRow of level) {
-      for (let piece of levelRow) {
-        isLevelComplete = isLevelComplete && piece.isConnected;
-
-        if (!isLevelComplete) {
-          return false;
-        }
-      }
-    }
-    return isLevelComplete;
   }
 
   render() {
