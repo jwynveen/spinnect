@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import firebase from 'react-native-firebase';
 import config from 'react-native-config'
 import { createStackNavigator, createAppContainer } from 'react-navigation';
-import { variables } from './styles';
+import variables from './variables';
 
 import Home from './screens/Home';
 import GameScreen from './screens/GameScreen';
