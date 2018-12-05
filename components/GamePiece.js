@@ -16,7 +16,7 @@ export default class GamePiece extends React.Component {
   constructor(props) {
     super(props);
 
-    this.animationDuration = 150;
+    this.animationDuration = 100;
 
     // Callback function to notify board (parent) of piece rotation state
     this.onUpdate = props.onUpdate;
@@ -65,8 +65,8 @@ export default class GamePiece extends React.Component {
 
     // Initial transform values
     this.rotateValue = new Animated.Value(initialRotation);
-    this.scaleValue = new Animated.Value(0);
-    this.elevationValue = new Animated.Value(0);
+    // this.scaleValue = new Animated.Value(0);
+    // this.elevationValue = new Animated.Value(0);
 
     this.state = {
       sides: props.initialSides || [0, 0, 0, 0],
@@ -84,22 +84,25 @@ export default class GamePiece extends React.Component {
       Animated.timing(this.rotateValue, {
         toValue: ++this.state.rotateState,
         duration: this.animationDuration,
+        useNativeDriver: true,
       }),
 
       // Scale / Zoom
-      Animated.sequence([
+      /*Animated.sequence([
         Animated.timing(this.scaleValue, {
           toValue: 1,
           duration: this.animationDuration / 5 * 3,
+          useNativeDriver: true,
         }),
         Animated.timing(this.scaleValue, {
           toValue: 0,
           duration: this.animationDuration / 5 * 2,
+          useNativeDriver: true,
         }),
-      ]),
+      ]),*/
 
       // Shadow
-      Animated.sequence([
+      /*Animated.sequence([
         Animated.timing(this.elevationValue, {
           toValue: 1,
           duration: this.animationDuration / 5 * 3,
@@ -108,7 +111,7 @@ export default class GamePiece extends React.Component {
           toValue: 0,
           duration: this.animationDuration / 5 * 2,
         }),
-      ]),
+      ]),*/
     ]).start();
 
     // Rotate sides array
@@ -125,24 +128,24 @@ export default class GamePiece extends React.Component {
   }
 
   render() {
-    const pieceScale = this.scaleValue.interpolate({
-      inputRange: [0, 0.5, 1],
-      outputRange: [1, 1.1, 1.2]
-    });
-    const elevationScale = this.elevationValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 10]
-    });
+    // const pieceScale = this.scaleValue.interpolate({
+    //   inputRange: [0, 0.5, 1],
+    //   outputRange: [1, 1.1, 1.2]
+    // });
+    // const elevationScale = this.elevationValue.interpolate({
+    //   inputRange: [0, 1],
+    //   outputRange: [0, 10]
+    // });
     let rotation = this.rotateValue.interpolate({
       inputRange: [0, 1],
       outputRange: ["0deg", "90deg"] // degree of rotation
     });
 
     let transformStyle = {
-      elevation: elevationScale,
+      // elevation: elevationScale,
       transform: [{
-        scale: pieceScale,
-      }, {
+        // scale: pieceScale,
+      // }, {
         rotate: rotation,
       }],
     };

@@ -29,7 +29,7 @@ export default class GameScreen extends React.Component {
     super(props);
 
     // todo: get level dynamically
-    const level = [
+    /*const level = [
       [
         {sides: [1, 1, 0, 0], isConnected: false},
         {sides: [0, 1, 1, 1], isConnected: false},
@@ -54,19 +54,20 @@ export default class GameScreen extends React.Component {
         {sides: [1, 0, 1, 0], isConnected: false},
         {sides: [1, 0, 0, 0], isConnected: false},
       ],
-    ];
+    ];*/
 
     const difficulty = props.navigation.getParam('difficulty', '');
+    const level = this.generateLevel(difficulty);
     const levelSize = level.length;
 
     // Calculate piece size:
     // Screen width - 20px margin divided by number of pieces
-    // ...rounded down to nearest 10
+    // ...rounded down to nearest 5
     // todo: set max based on height (header, reset button, ad)
-    const pieceSize = Math.floor((width - 20) / levelSize / 10) * 10;
+    const pieceSize = Math.floor((width - 20) / levelSize / 5) * 5;
 
     this.state = {
-      attempt: 0, // this just gives a unique key to pieces so we can reset and have them update
+      levelKey: 0, // this just gives a unique key to pieces so we can reset and have them update
       isLevelComplete: false,
       difficulty,
       initialLevel: cloneDeep(level),
@@ -77,23 +78,45 @@ export default class GameScreen extends React.Component {
     };
   }
 
+  generateLevel(difficulty) {
+    const levelConfig = levelHelper.getLevelConfigByDifficulty(difficulty || this.state.difficulty);
+    const newLevel = levelHelper.generate(levelConfig.height, levelConfig.width);
+    return levelHelper.shuffleLevel(newLevel);
+  }
+  _onLevelComplete() {
+    //todo: save level stats
+  }
   _onReset() {
     this.setState((state) => ({
       level: cloneDeep(state.initialLevel),
-      attempt: state.attempt + 1,
+      levelKey: state.levelKey + 1,
     }));
   }
   _onNext() {
     //todo: _onNext
+
+    const level = this.generateLevel();
+    this.setState((state) => ({
+      levelKey: state.levelKey + 1,
+      isLevelComplete: false,
+      initialLevel: cloneDeep(level),
+      level,
+    }));
   }
   _onPieceUpdate(row, column, sides) {
-    this.state.level[row][column].sides = sides;
+    if (!this.state.isLevelComplete) {
+      this.state.level[row][column].sides = sides;
 
-    const level = levelHelper.isPieceConnected(this.state.level, row, column, true);
+      const level = levelHelper.isPieceConnected(this.state.level, row, column, true);
 
-    const isLevelComplete = levelHelper.isLevelComplete(level);
+      const isLevelComplete = levelHelper.isLevelComplete(level);
 
-    this.setState({isLevelComplete, level});
+      this.setState({isLevelComplete, level});
+
+      if (isLevelComplete) {
+        this._onLevelComplete();
+      }
+    }
   }
 
   render() {
@@ -111,7 +134,7 @@ export default class GameScreen extends React.Component {
               color={this.state.pieceColor}
               row={rowIndex}
               column={columnIndex}
-              key={this.state.attempt + ':' + (rowIndex + 1) + '.' + (columnIndex + 1)}
+              key={this.state.levelKey + ':' + (rowIndex + 1) + '.' + (columnIndex + 1)}
             />
           )}
         </View>
@@ -124,7 +147,7 @@ export default class GameScreen extends React.Component {
         <View style={styles.overlay}>
           <View style={styles.successContainer}>
             <Text style={styles.successTitle}>Perfect!</Text>
-            <TouchableHighlight onPress={this._onNext} style={styles.nextButton}>
+            <TouchableHighlight onPress={this._onNext.bind(this)} style={styles.nextButton}>
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableHighlight>
           </View>

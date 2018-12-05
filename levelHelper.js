@@ -260,5 +260,36 @@ export default {
     }
 
     return '?';
+  },
+
+  /**
+   * Get height and width of level based on difficulty
+   * @param {string} difficulty
+   * @returns {{height: number, width: number}}
+   */
+  getLevelConfigByDifficulty(difficulty) {
+    let size = 5;
+    switch (difficulty) {
+      case 'Master':
+        size = 13;
+        break;
+      case 'Expert':
+        size = 11;
+        break;
+      case 'Hard':
+        size = 9;
+        break;
+      case 'Medium':
+        size = 7;
+        break;
+      default:
+        size = 5;
+        break;
+    }
+
+    return {
+      height: size,
+      width: size,
+    };
   }
 }
