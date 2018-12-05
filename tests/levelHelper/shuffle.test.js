@@ -7,19 +7,19 @@ import levelHelper from '../../levelHelper';
  */
 const sampleLevel = [
   [
-    {sides: [1, 1, 0, 0], isConnected: true},
-    {sides: [1, 1, 1, 0], isConnected: true},
-    {sides: [0, 1, 1, 0], isConnected: true},
+    { sides: [1, 1, 0, 0], isConnected: true },
+    { sides: [1, 1, 1, 0], isConnected: true },
+    { sides: [0, 1, 1, 0], isConnected: true },
   ],
   [
-    {sides: [1, 1, 0, 1], isConnected: true},
-    {sides: [1, 1, 1, 1], isConnected: true},
-    {sides: [0, 1, 1, 1], isConnected: true},
+    { sides: [1, 1, 0, 1], isConnected: true },
+    { sides: [1, 1, 1, 1], isConnected: true },
+    { sides: [0, 1, 1, 1], isConnected: true },
   ],
   [
-    {sides: [1, 0, 0, 1], isConnected: true},
-    {sides: [1, 0, 1, 1], isConnected: true},
-    {sides: [0, 0, 1, 1], isConnected: true},
+    { sides: [1, 0, 0, 1], isConnected: true },
+    { sides: [1, 0, 1, 1], isConnected: true },
+    { sides: [0, 0, 1, 1], isConnected: true },
   ],
 ];
 it('returns disconnected level', () => {
@@ -38,13 +38,12 @@ it('returns disconnected level', () => {
 });
 
 it.only('sets isConnected on each piece', () => {
-  let result = levelHelper.shuffleLevel(sampleLevel);
+  const result = levelHelper.shuffleLevel(sampleLevel);
 
   console.log(levelHelper.levelToASCII(result));
 
   for (let rowIdx = 0; rowIdx < sampleLevel.length; rowIdx++) {
     for (let colIdx = 0; colIdx < sampleLevel[rowIdx].length; colIdx++) {
-
       const initialIsConnected = result[rowIdx][colIdx].isConnected;
 
       const expectedResult = levelHelper.isPieceConnected(result, rowIdx, colIdx);
@@ -52,11 +51,11 @@ it.only('sets isConnected on each piece', () => {
       expect({
         rowIdx,
         colIdx,
-        result: expectedResult[rowIdx][colIdx].isConnected
+        result: expectedResult[rowIdx][colIdx].isConnected,
       }).toEqual({
         rowIdx,
         colIdx,
-        result: initialIsConnected
+        result: initialIsConnected,
       });
     }
   }

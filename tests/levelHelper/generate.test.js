@@ -7,7 +7,7 @@ it('returns level with correct number of rows', () => {
 it('returns level with correct number of columns', () => {
   const result = levelHelper.generate(4, 5);
 
-  for (let row of result) {
+  for (const row of result) {
     expect(row.length).toEqual(5);
   }
 });

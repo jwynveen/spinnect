@@ -3,7 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "babel-jest": "23.6.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
     "fs-extra": "^6.0.1",
     "jest": "23.6.0",
     "metro-react-native-babel-preset": "0.48.0",
@@ -19,11 +25,16 @@
     "resetcache": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm install && npm start -- --reset-cache",
     "rename": "node ./bin/rename.js",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "lint": "./node_modules/.bin/eslint --ext .jsx,.js ./"
   },
   "jest": {
     "preset": "react-native",
-    "testPathIgnorePatterns": ["/node_modules/", "/Pods/", "App.test.js"],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/Pods/",
+      "App.test.js"
+    ],
     "transformIgnorePatterns": [
       "node_modules/(?!react-native|react-navigation)/"
     ],

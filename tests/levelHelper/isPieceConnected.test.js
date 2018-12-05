@@ -7,19 +7,19 @@ import levelHelper from '../../levelHelper';
  */
 const sampleLevel = [
   [
-    {sides: [1, 1, 0, 0], isConnected: false},
-    {sides: [0, 1, 1, 1], isConnected: false},
-    {sides: [1, 0, 0, 1], isConnected: false},
+    { sides: [1, 1, 0, 0], isConnected: false },
+    { sides: [0, 1, 1, 1], isConnected: false },
+    { sides: [1, 0, 0, 1], isConnected: false },
   ],
   [
-    {sides: [1, 1, 0, 1], isConnected: false},
-    {sides: [1, 1, 1, 1], isConnected: false},
-    {sides: [1, 1, 0, 1], isConnected: false},
+    { sides: [1, 1, 0, 1], isConnected: false },
+    { sides: [1, 1, 1, 1], isConnected: false },
+    { sides: [1, 1, 0, 1], isConnected: false },
   ],
   [
-    {sides: [0, 0, 1, 1], isConnected: false},
-    {sides: [1, 1, 0, 1], isConnected: false},
-    {sides: [1, 0, 0, 1], isConnected: false},
+    { sides: [0, 0, 1, 1], isConnected: false },
+    { sides: [1, 1, 0, 1], isConnected: false },
+    { sides: [1, 0, 0, 1], isConnected: false },
   ],
 ];
 it('returns if row not found', () => {
