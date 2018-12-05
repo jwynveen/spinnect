@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import firebase from 'react-native-firebase';
-import config from 'react-native-config'
+import config from 'react-native-config';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import variables from './variables';
 
@@ -9,8 +9,8 @@ import Home from './screens/Home';
 import GameScreen from './screens/GameScreen';
 
 const AppNavigator = createStackNavigator({
-  Home: Home,
-  GameScreen: GameScreen,
+  Home,
+  GameScreen,
 }, {
   initialRouteName: 'Home',
   defaultNavigationOptions: {
@@ -22,7 +22,7 @@ const AppNavigator = createStackNavigator({
     headerTitleStyle: {
       fontWeight: 'bold',
       textAlign: 'center',
-      flex:1,
+      flex: 1,
     },
   },
 });
@@ -30,7 +30,6 @@ const AppNavigator = createStackNavigator({
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
-
   async componentDidMount() {
     // TODO: You: Do firebase things
     // const { user } = await firebase.auth().signInAnonymously();

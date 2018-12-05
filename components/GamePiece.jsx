@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import pieces from './shapes/standard/index';
 
 const propTypes = {
+  size: PropTypes.number.isRequired,
+  color: PropTypes.string.isRequired,
   row: PropTypes.number.isRequired,
   column: PropTypes.number.isRequired,
   initialSides: PropTypes.arrayOf(PropTypes.number).isRequired,
@@ -145,7 +147,8 @@ class GamePiece extends React.Component {
     }
   }
 
-  render({ size, color }) {
+  render() {
+    const { size, color } = this.props;
     // const pieceScale = this.scaleValue.interpolate({
     //   inputRange: [0, 0.5, 1],
     //   outputRange: [1, 1.1, 1.2]
