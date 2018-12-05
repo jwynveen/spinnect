@@ -44,6 +44,7 @@ export default {
         levelClone = this.isPieceConnected(levelClone, row, column + 1);
       }
     } else if (sides[0]) {
+      // there is no neighbor to the right, but the right side is 1
       isConnected = false;
     }
     // isSideConnect (2)
@@ -95,6 +96,12 @@ export default {
     return every(pieces, { isConnected: true });
   },
 
+  /**
+   * Randomly generate a level
+   * @param {number} height
+   * @param {number} width
+   * @returns {Array}
+   */
   generate(height, width) {
     const level = [];
 
@@ -148,6 +155,34 @@ export default {
       }
       level.push(row);
     }
+    return level;
+  },
+
+  /**
+   * Randomly rotates pieces within level
+   * @param {array} level
+   * @returns {array}
+   */
+  shuffleLevel(level) {
+    for (let row of level) {
+      for (let cell of row) {
+
+        const turns = random(0, 3);
+
+        for (let i = 0; i < turns; i++) {
+          // rotate counter-clockwise
+          const side = cell.sides.shift();
+          cell.sides.push(side);
+        }
+      }
+    }
+
+    for (let rowIdx = 0; rowIdx < level.length; rowIdx++) {
+      for (let colIdx = 0; colIdx < level[rowIdx].length; colIdx++) {
+        level = this.isPieceConnected(level, rowIdx, colIdx);
+      }
+    }
+
     return level;
   },
 

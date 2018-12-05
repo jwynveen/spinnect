@@ -25,4 +25,4 @@ it('returns fully connected level', () => {
 
   const isComplete = levelHelper.isLevelComplete(result);
   expect(isComplete).toBeTruthy();
-})
+});
