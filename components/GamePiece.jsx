@@ -1,18 +1,31 @@
-'use strict';
-
 import React from 'react';
 import {
   Animated,
-  Easing,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
-  View,
 } from 'react-native';
+import PropTypes from 'prop-types';
 import pieces from './shapes/standard/index';
 
-export default class GamePiece extends React.Component {
+const propTypes = {
+  row: PropTypes.number.isRequired,
+  column: PropTypes.number.isRequired,
+  initialSides: PropTypes.arrayOf(PropTypes.number).isRequired,
+  onUpdate: PropTypes.func,
+};
+const defaultProps = {
+  onUpdate: null,
+};
 
+const styles = StyleSheet.create({
+  gamepiece: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+class GamePiece extends React.Component {
   constructor(props) {
     super(props);
 
@@ -68,27 +81,30 @@ export default class GamePiece extends React.Component {
     // this.scaleValue = new Animated.Value(0);
     // this.elevationValue = new Animated.Value(0);
 
+    this.onPress = this.onPress.bind(this);
     this.state = {
       sides: props.initialSides || [0, 0, 0, 0],
       rotateState: initialRotation,
-    }
+    };
   }
 
 
-  _onPress() {
+  onPress() {
     console.log('press');
+    let { rotateState } = this.state;
+    const { sides } = this.state;
 
     // Animate
     Animated.parallel([
       // Rotation
       Animated.timing(this.rotateValue, {
-        toValue: ++this.state.rotateState,
+        toValue: ++rotateState,
         duration: this.animationDuration,
         useNativeDriver: true,
       }),
 
       // Scale / Zoom
-      /*Animated.sequence([
+      /* Animated.sequence([
         Animated.timing(this.scaleValue, {
           toValue: 1,
           duration: this.animationDuration / 5 * 3,
@@ -99,10 +115,10 @@ export default class GamePiece extends React.Component {
           duration: this.animationDuration / 5 * 2,
           useNativeDriver: true,
         }),
-      ]),*/
+      ]), */
 
       // Shadow
-      /*Animated.sequence([
+      /* Animated.sequence([
         Animated.timing(this.elevationValue, {
           toValue: 1,
           duration: this.animationDuration / 5 * 3,
@@ -111,23 +127,25 @@ export default class GamePiece extends React.Component {
           toValue: 0,
           duration: this.animationDuration / 5 * 2,
         }),
-      ]),*/
+      ]), */
     ]).start();
 
     // Rotate sides array
-    let sides = this.state.sides;
     const lastSide = sides.pop();
     sides.unshift(lastSide);
-    this.setState({ sides });
-    console.log(this.state.sides);
+    this.setState({
+      rotateState,
+      sides,
+    });
+    console.log(sides);
 
     // send update to game board
     if (this.onUpdate) {
-      this.onUpdate(this.row, this.column, this.state.sides);
+      this.onUpdate(this.row, this.column, sides);
     }
   }
 
-  render() {
+  render({ size, color }) {
     // const pieceScale = this.scaleValue.interpolate({
     //   inputRange: [0, 0.5, 1],
     //   outputRange: [1, 1.1, 1.2]
@@ -136,12 +154,12 @@ export default class GamePiece extends React.Component {
     //   inputRange: [0, 1],
     //   outputRange: [0, 10]
     // });
-    let rotation = this.rotateValue.interpolate({
+    const rotation = this.rotateValue.interpolate({
       inputRange: [0, 1],
-      outputRange: ["0deg", "90deg"] // degree of rotation
+      outputRange: ['0deg', '90deg'], // degree of rotation
     });
 
-    let transformStyle = {
+    const transformStyle = {
       // elevation: elevationScale,
       transform: [{
         // scale: pieceScale,
@@ -152,20 +170,21 @@ export default class GamePiece extends React.Component {
 
     return (
       <TouchableWithoutFeedback
-        onPress={this._onPress.bind(this)}
+        onPress={this.onPress}
       >
-        <Animated.View style={[styles.gamepiece, transformStyle]} width={this.props.size} height={this.props.size}>
-          <this.PieceShape size={this.props.size} color={this.props.color} />
+        <Animated.View
+          style={[styles.gamepiece, transformStyle]}
+          width={size}
+          height={size}
+        >
+          <this.PieceShape size={size} color={color} />
         </Animated.View>
       </TouchableWithoutFeedback>
     );
   }
-};
+}
 
-const styles = StyleSheet.create({
-  gamepiece: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+GamePiece.propTypes = propTypes;
+GamePiece.defaultProps = defaultProps;
+
+export default GamePiece;
