@@ -9,7 +9,7 @@ import {
 import Svg, {
   Path,
 } from 'react-native-svg';
-import {variables} from "../styles";
+import variables from "../variables";
 
 export default class ResetButton extends React.Component {
   render() {

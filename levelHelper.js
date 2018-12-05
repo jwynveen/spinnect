@@ -31,14 +31,14 @@ export default {
       return levelClone;
     }
 
-    const sides = currentRow[column].sides;
+    const { sides } = currentRow[column];
 
     let isConnected = true;
 
     // isSideConnect (1)
     if (currentRow && currentRow[column + 1]) {
       const neighborPiece = currentRow[column + 1];
-      const isSideConnected = sides[0] === neighborPiece.sides[2]
+      const isSideConnected = sides[0] === neighborPiece.sides[2];
       isConnected = isConnected && isSideConnected;
       if (checkNeighbors) {
         levelClone = this.isPieceConnected(levelClone, row, column + 1);
@@ -115,6 +115,7 @@ export default {
         if (rowIdx === 0) {
           sides[3] = 0;
         } else {
+          // eslint-disable-next-line prefer-destructuring
           sides[3] = level[rowIdx - 1][colIdx].sides[1];
         }
 
@@ -122,11 +123,12 @@ export default {
         if (colIdx === 0) {
           sides[2] = 0;
         } else {
+          // eslint-disable-next-line prefer-destructuring
           sides[2] = row[colIdx - 1].sides[0];
         }
 
         const connections = sum(sides);
-        let options = [
+        const options = [
           '00',
           '01',
           '10',
@@ -151,7 +153,7 @@ export default {
           sides[1] = Number(randomOption[1]);
         }
 
-        row.push({sides});
+        row.push({ sides });
       }
       level.push(row);
     }
@@ -164,9 +166,9 @@ export default {
    * @returns {array}
    */
   shuffleLevel(level) {
-    for (let row of level) {
-      for (let cell of row) {
-
+    let shuffledLevel = level;
+    for (const row of shuffledLevel) {
+      for (const cell of row) {
         const turns = random(0, 3);
 
         for (let i = 0; i < turns; i++) {
@@ -177,13 +179,13 @@ export default {
       }
     }
 
-    for (let rowIdx = 0; rowIdx < level.length; rowIdx++) {
-      for (let colIdx = 0; colIdx < level[rowIdx].length; colIdx++) {
-        level = this.isPieceConnected(level, rowIdx, colIdx);
+    for (let rowIdx = 0; rowIdx < shuffledLevel.length; rowIdx++) {
+      for (let colIdx = 0; colIdx < shuffledLevel[rowIdx].length; colIdx++) {
+        shuffledLevel = this.isPieceConnected(shuffledLevel, rowIdx, colIdx);
       }
     }
 
-    return level;
+    return shuffledLevel;
   },
 
   /**
@@ -195,7 +197,7 @@ export default {
     let output = '';
 
     for (let rowIdx = 0; rowIdx < level.length; rowIdx++) {
-      for (let cell of level[rowIdx]) {
+      for (const cell of level[rowIdx]) {
         output += this.pieceToASCII(cell.sides.join(''));
       }
 
@@ -257,9 +259,10 @@ export default {
       // quad
       case '1111':
         return '╋';
-    }
 
-    return '?';
+      default:
+        return '?';
+    }
   },
 
   /**
@@ -291,5 +294,5 @@ export default {
       height: size,
       width: size,
     };
-  }
-}
+  },
+};

@@ -1,8 +1,4 @@
-import {
-  StyleSheet,
-} from 'react-native';
-
-export const variables = {
+export default {
   color: {
     background: '#DFCFC5',
     buttonText: '#E3F2FD',
@@ -46,6 +42,6 @@ export const variables = {
       }
 
       return this[colorKey];
-    }
-  }
+    },
+  },
 };

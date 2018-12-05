@@ -8,7 +8,7 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
-import {variables} from '../styles';
+import variables from '../variables';
 
 export default class Home extends React.Component {
   static navigationOptions = {

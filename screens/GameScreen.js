@@ -12,7 +12,7 @@ import { cloneDeep } from 'lodash';
 import BannerAd from '../components/BannerAd';
 import GamePiece from '../components/GamePiece';
 import ResetButton from '../components/ResetButton';
-import {variables} from "../styles";
+import variables from "../variables";
 import levelHelper from '../levelHelper';
 const { width } = Dimensions.get('window');
 
