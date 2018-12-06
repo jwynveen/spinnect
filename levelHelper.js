@@ -179,6 +179,10 @@ export default {
       }
     }
 
+    // For debugging: rotate first piece one turn counter-clockwise
+    // const rotatedSide = shuffledLevel[0][0].sides.shift()
+    // shuffledLevel[0][0].sides.push(rotatedSide);
+
     for (let rowIdx = 0; rowIdx < shuffledLevel.length; rowIdx++) {
       for (let colIdx = 0; colIdx < shuffledLevel[rowIdx].length; colIdx++) {
         shuffledLevel = this.isPieceConnected(shuffledLevel, rowIdx, colIdx);

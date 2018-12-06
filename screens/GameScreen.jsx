@@ -7,12 +7,18 @@ import {
   View,
 } from 'react-native';
 import { cloneDeep } from 'lodash';
+import moment from 'moment';
+import momentDurationFormatSetup from 'moment-duration-format';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { saveLevelStats } from '../redux/actions';
+import variables from '../variables';
+import levelHelper from '../levelHelper';
 import BannerAd from '../components/BannerAd';
 import GamePiece from '../components/GamePiece';
 import ResetButton from '../components/ResetButton';
-import variables from '../variables';
-import levelHelper from '../levelHelper';
+
+momentDurationFormatSetup(moment);
 
 const { width } = Dimensions.get('window');
 
@@ -43,6 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  // Level Completion
   overlay: {
     position: 'absolute',
     left: 0,
@@ -58,17 +65,27 @@ const styles = StyleSheet.create({
     padding: 25,
     bottom: 80,
     position: 'absolute',
+    alignItems: 'center',
   },
   successTitle: {
     textAlign: 'center',
     fontSize: 40,
     fontWeight: 'bold',
     color: variables.color.primary,
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+  },
+  time: {
+    fontSize: 20,
+  },
+  timeLevel: {
+    fontWeight: 'bold',
   },
   nextButton: {
-    alignSelf: 'center',
     backgroundColor: variables.color.primary,
+    marginTop: 10,
     padding: 10,
     borderRadius: 25,
     elevation: 2,
@@ -84,6 +101,10 @@ const propTypes = {
   navigation: PropTypes.shape({
     getParam: PropTypes.func.isRequired,
   }).isRequired,
+  saveLevelStatsToState: PropTypes.func.isRequired,
+  userStatistics: PropTypes.shape({
+    bestTime: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 class GameScreen extends React.Component {
@@ -97,34 +118,6 @@ class GameScreen extends React.Component {
 
   constructor(props) {
     super(props);
-
-    // todo: get level dynamically
-    /* const level = [
-      [
-        {sides: [1, 1, 0, 0], isConnected: false},
-        {sides: [0, 1, 1, 1], isConnected: false},
-        {sides: [1, 0, 1, 0], isConnected: false},
-        {sides: [1, 0, 0, 1], isConnected: false},
-      ],
-      [
-        {sides: [1, 1, 0, 1], isConnected: false},
-        {sides: [1, 1, 1, 1], isConnected: false},
-        {sides: [1, 1, 1, 0], isConnected: false},
-        {sides: [0, 1, 1, 0], isConnected: false},
-      ],
-      [
-        {sides: [1, 0, 1, 0], isConnected: false},
-        {sides: [0, 1, 0, 1], isConnected: false},
-        {sides: [0, 0, 0, 1], isConnected: false},
-        {sides: [0, 0, 0, 0], isConnected: false},
-      ],
-      [
-        {sides: [1, 1, 0, 0], isConnected: false},
-        {sides: [0, 1, 1, 1], isConnected: false},
-        {sides: [1, 0, 1, 0], isConnected: false},
-        {sides: [1, 0, 0, 0], isConnected: false},
-      ],
-    ]; */
 
     const difficulty = props.navigation.getParam('difficulty', '');
     const level = this.generateLevel(difficulty);
@@ -146,6 +139,8 @@ class GameScreen extends React.Component {
       isLevelComplete: false,
       difficulty,
       level,
+      startTime: new Date(),
+      levelTime: '',
       pieceSize,
       pieceColor: variables.color.byDifficulty(difficulty),
       colorDark: variables.color.byDifficulty(difficulty, 'Dark'),
@@ -153,7 +148,20 @@ class GameScreen extends React.Component {
   }
 
   onLevelComplete() {
-    // todo: save level stats
+    const { difficulty, startTime } = this.state;
+    const { saveLevelStatsToState } = this.props;
+    const finishTime = new Date();
+    const durationInMS = finishTime - startTime;
+
+    saveLevelStatsToState(difficulty, {
+      duration: durationInMS,
+    });
+    this.setState({
+      isLevelComplete: true,
+      levelTime: moment.duration(durationInMS).format('m:ss', {
+        trim: false,
+      }),
+    });
   }
 
   onReset() {
@@ -164,14 +172,13 @@ class GameScreen extends React.Component {
   }
 
   onNext() {
-    // todo: _onNext
-
     const level = this.generateLevel();
     this.initialLevel = cloneDeep(level);
     this.setState(state => ({
       levelKey: state.levelKey + 1,
       isLevelComplete: false,
       level,
+      startTime: new Date(),
     }));
   }
 
@@ -189,7 +196,6 @@ class GameScreen extends React.Component {
       const isUpdatedLevelComplete = levelHelper.isLevelComplete(updatedLevel);
 
       this.setState({
-        isLevelComplete: isUpdatedLevelComplete,
         level: updatedLevel,
       });
 
@@ -217,9 +223,13 @@ class GameScreen extends React.Component {
       isLevelComplete,
       level,
       levelKey,
+      levelTime,
       pieceColor,
       pieceSize,
     } = this.state;
+    const {
+      userStatistics,
+    } = this.props;
 
     // Gameboard rows
     const rows = level.map((row, rowIndex) => (
@@ -240,11 +250,24 @@ class GameScreen extends React.Component {
     ));
 
     // Success overlay
+    let bestTime = '';
+    if (userStatistics && userStatistics.bestTime) {
+      bestTime = moment.duration(userStatistics.bestTime).format('m:ss', { trim: false });
+    }
     const overlay = isLevelComplete
       ? (
         <View style={styles.overlay}>
           <View style={styles.successContainer}>
             <Text style={styles.successTitle}>Perfect!</Text>
+
+            <View style={styles.timeContainer}>
+              <Text style={[styles.time, styles.timeLevel, styles.timeLabel]}>Time: </Text>
+              <Text style={[styles.time, styles.timeLevel, styles.timeValue]}>{levelTime}</Text>
+            </View>
+            <View style={styles.timeContainer}>
+              <Text style={[styles.time, styles.timeBest, styles.timeLabel]}>Best: </Text>
+              <Text style={[styles.time, styles.timeBest, styles.timeValue]}>{bestTime}</Text>
+            </View>
             <TouchableHighlight onPress={this.onNext} style={styles.nextButton}>
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableHighlight>
@@ -267,14 +290,6 @@ class GameScreen extends React.Component {
           />
         </View>
 
-        <View style={styles.debug}>
-          <Text>
-Level Complete:
-            {isLevelComplete ? 'true' : 'false'}
-          </Text>
-          {/* <Text>{JSON.stringify(this.state.level, null, true)}</Text> */}
-        </View>
-
         <View style={styles.adContainer}>
           <BannerAd />
         </View>
@@ -287,4 +302,15 @@ Level Complete:
 
 GameScreen.propTypes = propTypes;
 
-export default GameScreen;
+const mapStateToProps = (state, ownProps) => {
+  const difficulty = ownProps.navigation.getParam('difficulty', '');
+  return {
+    userStatistics: state.userStatistics[difficulty],
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  saveLevelStatsToState: (difficulty, stats) => dispatch(saveLevelStats(difficulty, stats)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);
