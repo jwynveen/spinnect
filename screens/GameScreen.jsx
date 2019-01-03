@@ -1,4 +1,5 @@
 import React from 'react';
+import firebase from 'react-native-firebase';
 import {
   Dimensions,
   StyleSheet,
@@ -145,6 +146,9 @@ class GameScreen extends React.Component {
       pieceColor: variables.color.byDifficulty(difficulty),
       colorDark: variables.color.byDifficulty(difficulty, 'Dark'),
     };
+
+    firebase.analytics().setAnalyticsCollectionEnabled(process.env.NODE_ENV !== 'development');
+    firebase.analytics().setCurrentScreen(`GameScreen:${difficulty}`, 'GameScreen');
   }
 
   onLevelComplete() {
@@ -152,6 +156,8 @@ class GameScreen extends React.Component {
     const { saveLevelStatsToState } = this.props;
     const finishTime = new Date();
     const durationInMS = finishTime - startTime;
+
+    firebase.analytics().logEvent('level_complete', { difficulty });
 
     saveLevelStatsToState(difficulty, {
       duration: durationInMS,
@@ -165,6 +171,8 @@ class GameScreen extends React.Component {
   }
 
   onReset() {
+    const { difficulty } = this.state;
+    firebase.analytics().logEvent('level_reset', { difficulty });
     this.setState(({ levelKey }) => ({
       level: cloneDeep(this.initialLevel),
       levelKey: levelKey + 1,
@@ -172,6 +180,9 @@ class GameScreen extends React.Component {
   }
 
   onNext() {
+    const { difficulty } = this.state;
+    firebase.analytics().logEvent('next_level', { difficulty });
+
     const level = this.generateLevel();
     this.initialLevel = cloneDeep(level);
     this.setState(state => ({
