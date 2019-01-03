@@ -7,6 +7,155 @@ import {
   sum,
 } from 'lodash';
 
+const pieceWeightsPercent = {
+  empty: 0,
+  single: 0,
+  straight: 30,
+  corner: 30,
+  triple: 30,
+  quad: 10,
+};
+
+function getRandomItem(options) {
+  return options[random(options.length - 1)];
+}
+
+function getWeightedRandomItem(options, weights) {
+  if (!options) {
+    throw new Error('`options` must not be empty.');
+  }
+
+  if (!weights) {
+    throw new Error('`weights` must not be empty.');
+  }
+  // If weights don't match options, just do it completely random
+  if (options.length !== weights.length) {
+    return getRandomItem(options);
+  }
+
+  const totalWeight = weights.reduce((acc, curr) => acc + curr, 0);
+  const randomNumber = random(totalWeight);
+  let weightSum = 0;
+  for (let i = 0; i < options.length; i++) {
+    weightSum += weights[i];
+    weightSum = weightSum.toFixed(2) * 1;
+
+    // only be inclusive of final item so that zero at start can't be selected
+    if (randomNumber < weightSum || randomNumber === weightSum === totalWeight) {
+      return options[i];
+    }
+  }
+  // we shouldn't get here, but just in case...
+  return options[0];
+}
+
+function getRandomRemainingSides(sideString) {
+  const options = [
+    '00',
+    '01',
+    '10',
+    '11',
+  ];
+
+  let weights = [];
+  switch (sideString) {
+    case '00':
+      weights = [
+        pieceWeightsPercent.empty / 1 * 4,
+        pieceWeightsPercent.single / 4 * 4,
+        pieceWeightsPercent.single / 4 * 4,
+        pieceWeightsPercent.corner / 4 * 4,
+      ];
+      break;
+    case '01':
+      weights = [
+        pieceWeightsPercent.single / 4 * 4,
+        pieceWeightsPercent.straight / 2 * 4,
+        pieceWeightsPercent.corner / 4 * 4,
+        pieceWeightsPercent.triple / 4 * 4,
+      ];
+      break;
+    case '10':
+      weights = [
+        pieceWeightsPercent.single / 4 * 4,
+        pieceWeightsPercent.corner / 4 * 4,
+        pieceWeightsPercent.straight / 2 * 4,
+        pieceWeightsPercent.triple / 4 * 4,
+      ];
+      break;
+    case '11':
+    default:
+      weights = [
+        pieceWeightsPercent.corner / 4 * 4,
+        pieceWeightsPercent.triple / 4 * 4,
+        pieceWeightsPercent.triple / 4 * 4,
+        pieceWeightsPercent.quad / 1 * 4,
+      ];
+      break;
+
+    case '000':
+      weights = [
+        pieceWeightsPercent.empty / 1 * 4,
+        pieceWeightsPercent.single / 4 * 4,
+      ];
+      break;
+    case '001':
+      weights = [
+        pieceWeightsPercent.single / 4 * 4,
+        pieceWeightsPercent.corner / 3 * 4,
+      ];
+      break;
+    case '010':
+      weights = [
+        pieceWeightsPercent.single / 4 * 4,
+        pieceWeightsPercent.straight / 2 * 4,
+      ];
+      break;
+    case '011':
+      weights = [
+        pieceWeightsPercent.corner / 4 * 4,
+        pieceWeightsPercent.triple / 4 * 4,
+      ];
+      break;
+    case '100':
+      weights = [
+        pieceWeightsPercent.single / 4 * 4,
+        pieceWeightsPercent.corner / 4 * 4,
+      ];
+      break;
+    case '101':
+      weights = [
+        pieceWeightsPercent.straight / 2 * 4,
+        pieceWeightsPercent.triple / 4 * 4,
+      ];
+      break;
+    case '110':
+      weights = [
+        pieceWeightsPercent.corner / 4 * 4,
+        pieceWeightsPercent.triple / 4 * 4,
+      ];
+      break;
+    case '111':
+      weights = [
+        pieceWeightsPercent.triple / 4 * 4,
+        pieceWeightsPercent.quad / 1 * 4,
+      ];
+      break;
+  }
+
+
+  // const randomOption = options[random(0, options.length - 1)];
+  if (sideString.length === 2) {
+    return getWeightedRandomItem(options, weights);
+  }
+
+  if (sideString.length === 3) {
+    return getWeightedRandomItem(['0', '1'], weights);
+  }
+
+  return '';
+}
+
 export default {
   /**
    * Check if a given piece is connected and return updated level array
@@ -111,46 +260,52 @@ export default {
       for (let colIdx = 0; colIdx < width; colIdx++) {
         const sides = new Array(4);
 
-        // Top
+        // region Check if Edge Piece
+        // Top/Bottom row
         if (rowIdx === 0) {
           sides[3] = 0;
-        } else {
+        } else if (rowIdx === width - 1) {
+          sides[1] = 0;
+        }
+
+        // Left/Right column
+        if (colIdx === 0) {
+          sides[2] = 0;
+        } else if (colIdx === height - 1) {
+          sides[0] = 0;
+        }
+        // endregion
+
+        // region Match from Previous Defined Pieces
+        // Top
+        if (sides[3] === undefined) {
           // eslint-disable-next-line prefer-destructuring
           sides[3] = level[rowIdx - 1][colIdx].sides[1];
         }
 
         // Left
-        if (colIdx === 0) {
-          sides[2] = 0;
-        } else {
+        if (sides[2] === undefined) {
           // eslint-disable-next-line prefer-destructuring
           sides[2] = row[colIdx - 1].sides[0];
         }
+        // endregion
 
-        const connections = sum(sides);
-        const options = [
-          '00',
-          '01',
-          '10',
-          '11',
-        ];
-        if (connections === 0) {
-          pull(options, '00');
-        }
-        const randomOption = options[random(0, options.length - 1)];
+        const nonNullSides = sides.filter(side => (side !== undefined));
+        const definedSideCount = nonNullSides.length;
+        const sideString = nonNullSides.join('');
+
+        const randomSides = getRandomRemainingSides(sideString);
 
         // Right
-        if (colIdx === width - 1) {
-          sides[0] = 0;
-        } else {
-          sides[0] = Number(randomOption[0]);
+        if (sides[0] === undefined) {
+          sides[0] = Number(randomSides[0]);
         }
 
         // Bottom
-        if (rowIdx === height - 1) {
-          sides[1] = 0;
-        } else {
-          sides[1] = Number(randomOption[1]);
+        if (sides[1] === undefined) {
+          sides[1] = Number(definedSideCount === 2
+            ? randomSides[1]
+            : randomSides[0]);
         }
 
         row.push({ sides });
@@ -265,7 +420,8 @@ export default {
         return '╋';
 
       default:
-        return '?';
+        return piece;
+        // return '?';
     }
   },
 

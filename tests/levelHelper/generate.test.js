@@ -16,6 +16,7 @@ it('returns fully connected level', () => {
   let result = levelHelper.generate(4, 4);
 
   console.log(levelHelper.levelToASCII(result));
+  console.log('\n');
 
   for (let rowIdx = 0; rowIdx < 4; rowIdx++) {
     for (let colIdx = 0; colIdx < 5; colIdx++) {
