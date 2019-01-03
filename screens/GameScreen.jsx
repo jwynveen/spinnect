@@ -1,7 +1,9 @@
 import React from 'react';
 import firebase from 'react-native-firebase';
 import {
+  Animated,
   Dimensions,
+  Easing,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -145,6 +147,8 @@ class GameScreen extends React.Component {
       pieceSize,
       pieceColor: variables.color.byDifficulty(difficulty),
       colorDark: variables.color.byDifficulty(difficulty, 'Dark'),
+      successAnimation: new Animated.Value(-300),
+      successAnimationInitialValue: -300,
     };
 
     firebase.analytics().setAnalyticsCollectionEnabled(process.env.NODE_ENV !== 'development');
@@ -152,7 +156,7 @@ class GameScreen extends React.Component {
   }
 
   onLevelComplete() {
-    const { difficulty, startTime } = this.state;
+    const { difficulty, startTime, successAnimation } = this.state;
     const { saveLevelStatsToState } = this.props;
     const finishTime = new Date();
     const durationInMS = finishTime - startTime;
@@ -168,6 +172,15 @@ class GameScreen extends React.Component {
         trim: false,
       }),
     });
+
+    Animated.timing(
+      successAnimation,
+      {
+        toValue: 80,
+        easing: Easing.elastic(),
+        duration: 700,
+      },
+    ).start();
   }
 
   onReset() {
@@ -180,7 +193,7 @@ class GameScreen extends React.Component {
   }
 
   onNext() {
-    const { difficulty } = this.state;
+    const { difficulty, successAnimationInitialValue } = this.state;
     firebase.analytics().logEvent('next_level', { difficulty });
 
     const level = this.generateLevel();
@@ -190,6 +203,7 @@ class GameScreen extends React.Component {
       isLevelComplete: false,
       level,
       startTime: new Date(),
+      successAnimation: new Animated.Value(successAnimationInitialValue),
     }));
   }
 
@@ -237,6 +251,7 @@ class GameScreen extends React.Component {
       levelTime,
       pieceColor,
       pieceSize,
+      successAnimation,
     } = this.state;
     const {
       userStatistics,
@@ -268,7 +283,12 @@ class GameScreen extends React.Component {
     const overlay = isLevelComplete
       ? (
         <View style={styles.overlay}>
-          <View style={styles.successContainer}>
+          <Animated.View
+            style={{
+              ...styles.successContainer,
+              bottom: successAnimation,
+            }}
+          >
             <Text style={styles.successTitle}>Perfect!</Text>
 
             <View style={styles.timeContainer}>
@@ -282,7 +302,7 @@ class GameScreen extends React.Component {
             <TouchableHighlight onPress={this.onNext} style={styles.nextButton}>
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableHighlight>
-          </View>
+          </Animated.View>
         </View>
       )
       : null;
