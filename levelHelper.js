@@ -2,9 +2,7 @@ import {
   cloneDeep,
   every,
   flattenDeep,
-  pull,
   random,
-  sum,
 } from 'lodash';
 
 const pieceWeightsPercent = {

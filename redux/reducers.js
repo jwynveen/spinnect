@@ -30,7 +30,9 @@ function userStatistics(state = initialState.userStatistics, action) {
       const { duration } = stats;
       const previousStats = state[difficulty];
 
-      const bestTime = !previousStats.bestTime || duration < previousStats.bestTime ? duration : previousStats.bestTime;
+      const bestTime = !previousStats.bestTime || duration < previousStats.bestTime
+        ? duration
+        : previousStats.bestTime;
       const totalCompleted = previousStats.totalCompleted + 1;
       const averageTime = (
         (previousStats.totalCompleted * previousStats.averageTime)
