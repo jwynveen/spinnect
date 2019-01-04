@@ -9,9 +9,19 @@ React Native app started from [Firebase Starter App](https://github.com/invertas
 1) **[Android]** If you haven't already got an android device attached/emulator running then you'll need to get one running (make sure the emulator is with Google Play / APIs). When ready run `npm run android` from the root of your project.
 
 ## Build for Production
+### Setup
+1) Ensure `spinnect.jks` is in `android/app`
+1) Add keystore password to Mac keychain ([instructions](https://pilloxa.gitlab.io/posts/safer-passwords-in-gradle/)) using name `spinnect_keystore`
+
 ### Android
+1) Update versionCode and versionName in `/android/app/build.gradle` in `android > defaultConfig`
+1) Update js bundle with `npm run android-bundle`
+   1) This should update `/android/app/src/main/assets/index.android.bundle`
+   1) If images are copied into the `/android/app/src/main/res` directory, delete them
 1) `npm run apk`
-1) Upload generated APK from `/android/app/build/outputs/apk/release/app-release-unsigned.apk` to Play Store
+1) Upload generated APK from `/android/app/build/outputs/apk/release/app-release.apk` to Play Store
+   1) To test on emulator first, drag apk file to emulator
+
 ## Common Errors
 
 * **Program type already present: com.facebook.react.ReactInstanceManager$9** on `npm run android`

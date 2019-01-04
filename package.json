@@ -18,7 +18,8 @@
   },
   "scripts": {
     "android": "ENVFILE=.env.dev react-native run-android",
-    "android-prod": "ENVFILE=.env.release react-native run-android",
+    "android-bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "android-prod": "ENVFILE=.env.release react-native run-android --variant=release",
     "ios": "ENVFILE=.env.dev react-native run-ios",
     "apk": "export ENVFILE=.env.release && cd android && ./gradlew assembleRelease && cd ..",
     "clearcache": "watchman watch-del-all && react-native start --reset-cache",

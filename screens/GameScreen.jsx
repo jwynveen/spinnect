@@ -33,6 +33,8 @@ const styles = StyleSheet.create({
   },
   gameboard: {
     marginTop: 20,
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   row: {
     flexDirection: 'row',
