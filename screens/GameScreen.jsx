@@ -31,21 +31,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexGrow: 1,
   },
-  gameboard: {
-    marginTop: 20,
+  gameContainer: {
     flexGrow: 1,
+    justifyContent: 'space-evenly',
+  },
+  gameboard: {
     justifyContent: 'center',
   },
   row: {
     flexDirection: 'row',
   },
   resetContainer: {
-    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     display: 'flex',
-  },
-  debug: {
   },
   adContainer: {
     backgroundColor: '#ffffff',
@@ -130,10 +129,8 @@ class GameScreen extends React.Component {
     const levelSize = level.length;
 
     // Calculate piece size:
-    // Screen width - 20px margin divided by number of pieces
-    // ...rounded down to nearest 5
-    // todo: set max based on height (header, reset button, ad)
-    const pieceSize = Math.floor((width - 20) / levelSize / 5) * 5;
+    // Screen width - 10px margin divided by number of pieces
+    const pieceSize = (width - 10) / levelSize;
 
     this.onNext = this.onNext.bind(this);
     this.onPieceUpdate = this.onPieceUpdate.bind(this);
@@ -312,15 +309,18 @@ class GameScreen extends React.Component {
     // Screen
     return (
       <View style={styles.container}>
-        <View style={styles.gameboard}>
-          {rows}
-        </View>
 
-        <View style={styles.resetContainer}>
-          <ResetButton
-            onPress={this.onReset}
-            color={colorDark}
-          />
+        <View style={styles.gameContainer}>
+          <View style={styles.gameboard}>
+            {rows}
+          </View>
+
+          <View style={styles.resetContainer}>
+            <ResetButton
+              onPress={this.onReset}
+              color={colorDark}
+            />
+          </View>
         </View>
 
         <View style={styles.adContainer}>
